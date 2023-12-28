@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ main ]
 
-name: CI
 jobs:
   flatpak:
     name: "Flatpak"
