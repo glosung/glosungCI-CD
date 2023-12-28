@@ -6,36 +6,18 @@ on:
   pull_request:
     branches: [ main ]
 
+name: CI
 jobs:
- build:
-
+  flatpak:
+    name: "Flatpak"
     runs-on: ubuntu-latest
-
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:gnome-44
+      options: --privileged
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up Flatpak Builder
-      uses: jeremyt157/flatpak-builder-action@master
+    - uses: actions/checkout@v4
+    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
-        base-image: ubuntu-latest
-        flatpak-runtime: org.gnome.Platform//40
-        app-id: org.gnome.zbrown.glosung #replace with your app-id
-        app-name: glosung #replace with your app-name
-        app-runtime: org.gnome.Platform//40
-        branch: main
-        flatpak-runtime-version: 40
-        sdk-version: 40
-
-    - name: Build Flatpak
-      run: |
-        flatpak-builder --force-clean --verbose-import --repo=repo --subject=org.gnome.Totem.git --command-string="flatpak-builder --repo=repo --subject=org.gnome.Totem.git --install --no-clean --verbose-import" --no-interactive org.flatpak.glosung.yaml
-
-    - name: Commit and push the built Flatpak
-      run: |
-        git config --global user.name "glosung"
-        git config --global user.email "nued_a@yahoo.com"
-        git remote set-url origin https://${{ secrets.TOKEN }}@github.com/${{ github.repository }}.git
-        git add --all .
-        git commit -m "Build Flatpak"
-        git push origin HEAD:${{ github.ref }}
+        bundle: palette.flatpak
+        manifest-path: org.gnome.zbrown.Palette.yml
+        cache-key: flatpak-builder-${{ github.sha }}
