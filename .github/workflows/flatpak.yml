@@ -1,10 +1,9 @@
-name: Build and publish
+name: Build and publish Flatpak package
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build-and-publish:
@@ -13,12 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install dependencies
+      - name: Install flatpak-builder
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential
+          sudo apt-get install -y flatpak-builder
 
-      - name: Build and publish
+      - name: Build Flatpak package
         run: |
           flatpak-builder --sdk --no-x11 build MyApp.flatpak
+
+      - name: Publish Flatpak package
+        run: |
           flatpak-builder --sdk --no-x11 publish MyApp.flatpak
