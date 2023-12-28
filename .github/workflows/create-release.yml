@@ -1,0 +1,78 @@
+name: Release on Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Release on Merge
+        if: github.event.pull_request.merged == true
+        run: |
+          echo "This job runs only when a pull request is merged."
+  
+      - name: Create ZIP file
+        run: zip -r glosung.zip . -x ".git/*" ".github/*" "TODO" "screenshot.png" ".gitignore" "glosung.svg" "herrnhut.svg" "README.md" "INSTALL" "org.flatpak.glosung.yaml" "org.gnome.zbrown.glosung.json" "publish_flatpak.sh" "yamltest.yml" "publish_flatpak.sh" "CHANGELOG.md"
+
+      - name: Create tar file
+        run: zip -r glosung.tar.xz . -x ".git/*" ".github/*" "TODO" "screenshot.png" ".gitignore" "glosung.svg" "herrnhut.svg" "README.md" "INSTALL" "org.flatpak.glosung.yaml" "org.gnome.zbrown.glosung.json" "publish_flatpak.sh" "yamltest.yml" "publish_flatpak.sh" "CHANGELOG.md"
+
+#Maybe remove
+      - name: Get Date
+        id: get_date
+        run: echo "::set-output name=DATE::$(date +'%Y-%m-%d')"
+
+      - name: Extract release version
+        # id must be specified to retrieve the output of the step
+        id: extract-version-number
+        uses: michmich112/extract-version@main
+        with:
+          # specify here the path to your version file (e.g. package.json, pom.xml...)with:
+          version-file: SConstruct
+          schema: major.minor.build
+
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v1
+        with:
+          changelog_file: CHANGELOG.md 
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          tag_name: V${{ steps.extract-version-number.outputs.version }}
+          release_name: V${{ steps.extract-version-number.outputs.version }}
+          body: ${{ steps.extract-release-notes.outputs.release_notes }}
+          draft: false
+          prerelease: false
+
+      - name: Upload ZIP to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./glosung.zip
+          asset_name: glosung.zip
+          asset_content_type: application/zip
+
+      - name: Upload tar to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./glosung.tar.xz
+          asset_name: glosung.tar.xz
+          asset_content_type: application/tar.xz
+          

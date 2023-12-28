@@ -1,0 +1,53 @@
+app-id: de.githubuser.reponame
+runtime: org.gnome.Platform
+runtime-version: '3.36'
+sdk: org.gnome.Sdk
+sdk-version: '3.36'
+
+finish-args:
+    - --socket=x11
+    - --socket=wayland
+
+modules:
+    - name: Reponame
+      buildsystem: simple
+      sources:
+          - type: archive
+            url: "https://github.com/githubuser/reponame/archive/master.tar.gz"
+            sha256: "<SHA256 Hash hier einfügen>"
+
+      build-commands:
+          - autoreconf -i
+          - ./configure --prefix=/app
+          - make
+          - make install
+
+      install-commands:
+          - mkdir -p /app/lib/Reponame
+          - mv /app/lib/libReponame.so /app/lib/Reponame/
+          - ln -s /app/lib/Reponame/libReponame.so /app/lib/libReponame.so
+
+      post-install:
+          - mv /app/lib/Reponame /app/lib/libreponame
+          - mv /app/share/Reponame /app/share/libreponame
+          - ln -s /app/share/libreponame /app/share/Reponame
+          - ln -s /app/lib/libreponame /app/lib/Reponame
+
+ - name: de.githubuser.reponame.json
+    buildsystem: simple
+    build-commands:
+      - cat >de.githubuser.reponame.json <<EOL
+        {
+          "app-id": "de.githubuser.reponame",
+          "runtime": "org.gnome.Platform",
+          "runtime-version": "3.36",
+          "sdk": "org.gnome.Sdk",
+          "sdk-version": "3.36"
+        }
+        EOL
+
+      - install -D -m 644 de.githubuser.reponame.json /app/share/flatpak-info/
+
+commands:
+    main:
+        - de.githubuser.reponame

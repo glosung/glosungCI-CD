@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <object class="GtkApplicationWindow" id="window">
+    <signal name="destroy" handler="onDestroy" swapped="no"/>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkBox">
+            <property name="name">content</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkLabel" id="date">
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="losung">
+                <property name="margin-top">10</property>
+                <style>
+                  <class name="spaceabove"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="losung_address">
+                <property name="margin-bottom">10</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLinkButton" id="losung_address_link">
+                <property name="visible">0</property>
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="lehrtext">
+                <property name="margin-top">10</property>
+                <style>
+                  <class name="spaceabove"/>
+                </style>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="lehrtext_address">
+              </object>
+            </child>
+            <child>
+              <object class="GtkLinkButton" id="lehrtext_address_link">
+                <property name="visible">0</property>
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="reading">
+                <property name="margin-top">10</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="title-widget">
+          <object class="GtkLabel">
+            <property name="label" translatable="yes">GLosung</property>
+            <property name="single-line-mode">True</property>
+            <property name="ellipsize">end</property>
+            <property name="width-chars">5</property>
+            <style>
+              <class name="title"/>
+            </style>
+          </object>
+        </property>
+        <child type="end">
+          <object class="GtkBox">
+            <child>
+              <object class="GtkButton" id="languages">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <property name="tooltip-text" translatable="yes">Manage Installed Language Files</property>
+                <signal name="clicked" handler="lang_manager_cb" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <binding name="resource">
+                      <closure type="gchararray" function="get_button_icon_name">
+                        <constant type="gchararray">/org/godehardt/glosung/ui/icons/bars-solid</constant>
+                      </closure>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="properties">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <property name="tooltip-text" translatable="yes">Preferences</property>
+                <signal name="clicked" handler="property_cb" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <binding name="resource">
+                      <closure type="gchararray" function="get_button_icon_name">
+                        <constant type="gchararray">/org/godehardt/glosung/ui/icons/gear-solid</constant>
+                      </closure>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="about">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <property name="tooltip-text" translatable="yes">About</property>
+                <signal name="clicked" handler="about_cb" swapped="no"/>
+                <style>
+                  <class name="flat"/>
+                </style>
+                <child>
+                  <object class="GtkImage">
+                    <binding name="resource">
+                      <closure type="gchararray" function="get_button_icon_name">
+                        <constant type="gchararray">/org/godehardt/glosung/ui/icons/question-circle-regular</constant>
+                      </closure>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <child>
+              <object class="GtkButton" id="previous_month">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <property name="tooltip-text" translatable="yes">Previous Month</property>
+                <signal name="clicked" handler="prev_month_cb" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <binding name="resource">
+                      <closure type="gchararray" function="get_button_icon_name">
+                        <constant type="gchararray">/org/godehardt/glosung/ui/icons/angles-left-solid</constant>
+                      </closure>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="previous_day">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <property name="tooltip-text" translatable="yes">Previous Day</property>
+                <signal name="clicked" handler="prev_day_cb" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <binding name="resource">
+                      <closure type="gchararray" function="get_button_icon_name">
+                        <constant type="gchararray">/org/godehardt/glosung/ui/icons/angle-left-solid</constant>
+                      </closure>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="today">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <property name="tooltip-text" translatable="yes">Today</property>
+                <signal name="clicked" handler="today_cb" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <binding name="resource">
+                      <closure type="gchararray" function="get_button_icon_name">
+                        <constant type="gchararray">/org/godehardt/glosung/ui/icons/angles-down-solid</constant>
+                      </closure>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="next_day">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <property name="tooltip-text" translatable="yes">Next Day</property>
+                <signal name="clicked" handler="next_day_cb" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <binding name="resource">
+                      <closure type="gchararray" function="get_button_icon_name">
+                        <constant type="gchararray">/org/godehardt/glosung/ui/icons/angle-right-solid</constant>
+                      </closure>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="next_month">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <property name="tooltip-text" translatable="yes">Next Month</property>
+                <signal name="clicked" handler="next_month_cb" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <binding name="resource">
+                      <closure type="gchararray" function="get_button_icon_name">
+                        <constant type="gchararray">/org/godehardt/glosung/ui/icons/angles-right-solid</constant>
+                      </closure>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="calendar">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <property name="tooltip-text" translatable="yes">Calendar</property>
+                <signal name="clicked" handler="calendar_cb" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <binding name="resource">
+                      <closure type="gchararray" function="get_button_icon_name">
+                        <constant type="gchararray">/org/godehardt/glosung/ui/icons/calendar-alt-regular</constant>
+                      </closure>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkButton" id="copy">
+                <property name="focusable">1</property>
+                <property name="receives-default">1</property>
+                <property name="tooltip-text" translatable="yes">Copy Text</property>
+                <signal name="clicked" handler="copy_cb" swapped="no"/>
+                <child>
+                  <object class="GtkImage">
+                    <binding name="resource">
+                      <closure type="gchararray" function="get_button_icon_name">
+                        <constant type="gchararray">/org/godehardt/glosung/ui/icons/clone-regular</constant>
+                      </closure>
+                    </binding>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

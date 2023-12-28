@@ -1,0 +1,250 @@
+- name: Set up Flatpak environment
+        run: |
+          sudo apt-get update -qy
+          sudo apt-get install -y flatpak-builder flatpak
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y flathub org.gnome.Platform/x86_64/40
+          sudo flatpak update -y
+          sudo flatpak install -y flathub org.freedesktop.Platform.GL.default//23.08
+          sudo flatpak install flathub org.gnome.Platform/x86_64/3.38 -y
+          sudo flatpak install --system org.gnome.Sdk//3.38 -y
+          git config --global user.name "Nu3d"
+          git config --global user.email "begatzio@stud.fra-uas.de"
+          git config --global init.defaultBranch main
+          git config --global credential.helper 'cache --timeout=3600'
+          git config --global init.defaultBranch main
+          git config --global http.extraheader "AUTHORIZATION: basic ${{ secrets.TOKEN }}"
+          echo -e "machine github.com\n  login ${{ secrets.TOKEN }}" > ~/.netrc
+          chmod 600 ~/.netrc
+
+
+
+--------------------------------*******************************************-----------------------------
+
+      
+      - name: Set Git Config
+        run: |
+          git config --global user.name "Nu3d"
+          git config --global user.email "begatzio@stud.fra-uas.de"
+          git config --global init.defaultBranch main
+          git config --global credential.helper 'cache --timeout=3600'
+          git config --global init.defaultBranch main
+          git config --global http.extraheader "AUTHORIZATION: basic ${{ secrets.TOKEN }}"
+          echo -e "machine github.com\n  login ${{ secrets.TOKEN }}" > ~/.netrc
+          chmod 600 ~/.netrc
+      - name: Build
+        run: scons
+
+  create-and-upload-release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Create ZIP file
+        run: zip -r glosung.zip . -x ".git/*" ".github/*" "TODO" "screenshot.png" ".gitignore" "glosung.svg" "herrnhut.svg" "README.md" "INSTALL" 
+
+      - name: Create tar file
+        run: zip -r glosung.tar.xz . -x ".git/*" ".github/*" "TODO" "screenshot.png" ".gitignore" "glosung.svg" "herrnhut.svg" "README.md" "INSTALL"
+        id: createtar
+      - name: Get last release number
+        id: last_release
+        run: |
+           LAST_RELEASE_NUMBER=$(curl -H "Authorization: token ${{ secrets.TOKEN }}" \
+             "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r '.tag_name')
+           echo "Last release number: $LAST_RELEASE_NUMBER"
+           NEW_RELEASE_NUMBER=$(echo "$LAST_RELEASE_NUMBER" | awk -F'v' '{print $2+1}')
+           echo "New release number: $NEW_RELEASE_NUMBER"
+           echo "NEW_RELEASE_NUMBER=$NEW_RELEASE_NUMBER" >> $GITHUB_ENV
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: v$NEW_RELEASE_NUMBER
+          draft: false
+          prerelease: false
+
+      - name: Upload ZIP to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./glosung.zip
+          asset_name: glosung.zip
+          asset_content_type: application/zip
+
+      - name: Upload tar to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./glosung.tar.xz
+          asset_name: glosung.tar.xz
+          asset_content_type: application/tar.xz
+
+  build-app:
+    needs: create-and-upload-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Flatpak environment
+        run: |
+          sudo apt-get update -qy
+          sudo apt-get install -y flatpak-builder flatpak
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y flathub org.gnome.Platform/x86_64/40
+          sudo flatpak install -y flathub org.gnome.Sdk//40
+          sudo flatpak update -y
+          sudo flatpak install -y flathub org.freedesktop.Platform.GL.default//23.08
+          git config --global user.name "Nu3d"
+          git config --global user.email "begatzio@stud.fra-uas.de"
+          git config --global init.defaultBranch main
+          git config --global credential.helper 'cache --timeout=3600'
+          git config --global init.defaultBranch main
+          git config --global http.extraheader "AUTHORIZATION: basic ${{ secrets.TOKEN }}"
+          echo -e "machine github.com\n  login ${{ secrets.TOKEN }}" > ~/.netrc
+          chmod 600 ~/.netrc
+      - name: Build Flatpak
+        run: flatpak-builder --repo=repo-dir app-dir org.gnome.zbrown.glosung.json
+
+  upload:
+    needs: build-app
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: ${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Flatpak Bundle
+        id: upload_flatpak
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./repo-dir/org.gnome.zbrown.glosung/x86_64/master/active/org.gnome.zbrown.glosung.flatpak
+          asset_name: org.gnome.zbrown.glosung.flatpak
+          asset_content_type: application/octet-stream
+
+//////////////////////////////////////////////********************************/////////////////////////////////
+
+name: C CI Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Cache APT Packages
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: scons debhelper intltool libgtk-4-dev libadwaita-1-dev libxml2-dev libcurl4-gnutls-dev libgconf2-dev gettext
+          version: 1.0
+
+      - name: Install jq and awk
+        run: |
+           sudo apt-get install -y jq
+           sudo apt-get install -y gawk
+      - name: Build
+        run: scons
+
+  build-app:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run App Tests
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Flatpak environment
+        run: |
+          sudo apt-get update -qy
+          sudo apt-get install -y flatpak-builder flatpak
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y flathub org.gnome.Sdk//43
+          sudo flatpak update -y
+          sudo flatpak install -y flathub org.freedesktop.Platform.GL.default//23.08
+          sudo apt-get install -y
+      - name: Build Flatpak todo
+        run: flatpak-builder --repo=repo myapp-dir com.example.MyApp.json
+      
+      - name: Flatpak Builder
+        uses: flatpak/flatpak-github-actions@v6.3
+
+  create-and-upload-release:
+    needs: build-app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Create ZIP file
+        run: zip -r glösung.zip . -x ".git/*" ".github/*" "TODO" "screenshot.png" ".gitignore" "glosung.svg" "herrnhut.svg" "README.md" "INSTALL" 
+        
+      - name: Create tar file
+        run: tar -r glosung.tar.xz . -x ".git/*" -x ".github/*" -x "TODO" -x "screenshot.png" -x ".gitignore" -x "glosung.svg" -x "herrnhut.svg" -x "README.md" -x "INSTALL"
+
+      - name: Get last release number
+        id: last_release
+        run: |
+             LAST_RELEASE_NUMBER=$(curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r '.tag_name')
+             echo "Last release number: $LAST_RELEASE_NUMBER"
+             NEW_RELEASE_NUMBER=$(echo "$LAST_RELEASE_NUMBER" | awk -F'v' '{print $2+1}')
+             echo "New release number: $NEW_RELEASE_NUMBER"
+             echo "NEW_RELEASE_NUMBER=$NEW_RELEASE_NUMBER" >> $GITHUB_ENV
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Glösung {{ v$NEW_RELEASE_NUMBER }}
+          draft: false
+          prerelease: false
+
+      - name: Upload ZIP to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./glösung.zip
+          asset_name: glösung.zip
+          asset_content_type: application/zip
+
+      - name: Upload tar to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./glösung.tar.xz
+          asset_name: glösung.tar.xz
+          asset_content_type: application/tar.xz

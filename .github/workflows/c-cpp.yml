@@ -1,0 +1,35 @@
+name: C CI Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Cache APT Packages
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: scons debhelper intltool libgtk-4-dev libadwaita-1-dev libxml2-dev libcurl4-gnutls-dev libgconf2-dev gettext
+          version: 1.0
+
+      - name: Install jq and awk
+        run: |
+           sudo apt-get install -y jq
+           sudo apt-get install -y gawk
+           
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+          
+      - name: Build
+        run: |
+          scons
+ 

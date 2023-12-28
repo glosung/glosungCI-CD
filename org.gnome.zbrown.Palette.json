@@ -1,0 +1,32 @@
+{
+    "app-id" : "org.gnome.zbrown.Palette",
+    "runtime" : "org.gnome.Platform",
+    "runtime-version" : "master",
+    "sdk" : "org.gnome.Sdk/x86_64/master",
+    "command" : "org.gnome.zbrown.Palette",
+    "finish-args" : [
+        "--share=ipc",
+        "--device=dri",
+        "--socket=fallback-x11",
+        "--socket=wayland"
+    ],
+    "modules" : [
+        {
+            "name" : "palette",
+            "buildsystem" : "meson",
+            "config-opts" : [
+                "--prefix=/app",
+                "--buildtype=debugoptimized",
+                "-Dtests=true"
+            ],
+            "sources" : [
+                {
+                    "name" : "palette",
+                    "buildsystem" : "meson",
+                    "type" : "dir",
+                    "path" : "./"
+                }
+            ]
+        }
+    ]
+}
