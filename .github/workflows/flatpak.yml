@@ -1,36 +1,24 @@
-name: Build Flatpak
+name: Build and publish
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Install Flatpak dependencies
-      run: |
-        sudo add-apt-repository ppa:alexlarsson/flatpak -y
-        sudo apt update
-        sudo apt install flatpak flatpak-builder flatpak-runtime -y
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
 
-    - name: Build Flatpak
-      run: |
-        flatpak-builder --force-clean --repo=repo your-app org.gnome.zbrown.glosung.json
-
-    - name: Publish Flatpak
-      uses: actions/upload-artifact@v2
-      with:
-        name: flatpak-artifact
-        path: repo
-
-    - name: Publish Flatpak Repository
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.TOKEN }}
-        publish_dir: ./repo
+      - name: Build and publish
+        run: |
+          flatpak-builder --sdk --no-x11 build MyApp.flatpak
+          flatpak-builder --sdk --no-x11 publish MyApp.flatpak
