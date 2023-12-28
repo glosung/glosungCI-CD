@@ -7,21 +7,35 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-publish:
+ build:
+
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Install flatpak-builder
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y flatpak-builder
+    - name: Set up Flatpak Builder
+      uses: jeremyt157/flatpak-builder-action@master
+      with:
+        base-image: ubuntu-latest
+        flatpak-runtime: org.gnome.Platform//40
+        app-id: org.gnome.zbrown.glosung #replace with your app-id
+        app-name: glosung #replace with your app-name
+        app-runtime: org.gnome.Platform//40
+        branch: main
+        flatpak-runtime-version: 40
+        sdk-version: 40
 
-      - name: Build Flatpak package
-        run: |
-          flatpak-builder -b --no-x11 --verbose build MyApp.flatpak
+    - name: Build Flatpak
+      run: |
+        flatpak-builder --force-clean --verbose-import --repo=repo --subject=org.gnome.Totem.git --command-string="flatpak-builder --repo=repo --subject=org.gnome.Totem.git --install --no-clean --verbose-import" --no-interactive org.flatpak.glosung.yaml
 
-      - name: Publish Flatpak package
-        run: |
-          flatpak-builder --sdk --no-x11 publish MyApp.flatpak
+    - name: Commit and push the built Flatpak
+      run: |
+        git config --global user.name "glosung"
+        git config --global user.email "nued_a@yahoo.com"
+        git remote set-url origin https://${{ secrets.TOKEN }}@github.com/${{ github.repository }}.git
+        git add --all .
+        git commit -m "Build Flatpak"
+        git push origin HEAD:${{ github.ref }}
