@@ -20,7 +20,7 @@ jobs:
 
       - name: Build Flatpak package
         run: |
-          flatpak-builder --type sdk --no-x11 build MyApp.flatpak
+          flatpak-builder -b --no-x11 build MyApp.flatpak
 
       - name: Publish Flatpak package
         run: |
