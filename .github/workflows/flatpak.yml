@@ -19,3 +19,4 @@ jobs:
       with:
         bundle: palette.flatpak
         manifest-path: manifest.yaml
+        cache-key: flatpak-builder-${{ github.sha }}
