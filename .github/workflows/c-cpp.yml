@@ -34,7 +34,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y scons debhelper intltool libgtk-4-dev libadwaita-1-dev libxml2-dev libcurl4-gnutls-dev libgconf2-dev gettext
           sudo apt-get install -y python3-pip
-          pip3 install Flask==2.0.1
+          pip3 install Flask==2.1.2
 
       - name: Build
         run: |
