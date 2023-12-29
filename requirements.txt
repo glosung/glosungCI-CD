@@ -3,7 +3,6 @@
 # Python-Abhängigkeiten
 Flask==2.0.1
 requests==2.26.0
-pip3 install Flask==2.0.1
 
 # Flatpak-Abhängigkeiten
 org.freedesktop.Platform.GL.default
