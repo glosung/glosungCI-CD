@@ -34,7 +34,7 @@ jobs:
         run: |
           scons
  
-   flatpak:
+  flatpak:
     name: "Flatpak"
     runs-on: ubuntu-latest
     container:
