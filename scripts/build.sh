@@ -17,3 +17,5 @@ make install DESTDIR=/app
 
 # Führe den Flatpak-Finish-Befehl aus
 flatpak finish --force-clean
+
+export PATH=$PATH:/usr/bin/flatpak-builder
