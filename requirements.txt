@@ -1,8 +1,3 @@
-# Beispiel requirements.txt für ein Python-Flatpak-Paket
-
-# Python-Abhängigkeiten
-requests==2.26.0
-
 # Flatpak-Abhängigkeiten
 org.freedesktop.Platform.GL.default
 org.freedesktop.Platform.VAAPI.Intel
