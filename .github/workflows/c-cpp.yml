@@ -43,7 +43,6 @@ jobs:
 
       - name: Install Flatpak Dependencies
         run: |
-          sudo apt update
           sudo apt upgrade
           sudo apt update
           sudo apt-get install flatpak flatpak-builder -y
@@ -51,6 +50,7 @@ jobs:
       - name: Install Flatpak SDK and Platform
         run: |
           flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo usermod -aG flatpak $USER
           flatpak install flathub org.gnome.Platform//40 org.gnome.Sdk//40 -y
 
       - name: Build Flatpak Package
