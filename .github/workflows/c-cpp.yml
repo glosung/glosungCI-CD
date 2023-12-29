@@ -37,14 +37,23 @@ jobs:
   flatpak:
     name: "Flatpak"
     runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-44
-      options: --privileged
     steps:
-      - uses: actions/checkout@v4
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
-        with:
-          bundle: palette.flatpak
-          manifest-path: manifest.json
-          cache-key: flatpak-builder-${{ github.sha }}
-          
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Flatpak Dependencies
+        run: |
+          sudo add-apt-repository ppa:alexlarsson/flatpak -y
+          sudo apt-get update
+          sudo apt-get install flatpak flatpak-builder -y
+
+      - name: Install Flatpak SDK and Platform
+        run: |
+          flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak install flathub org.gnome.Platform//40 org.gnome.Sdk//40 -y
+
+      - name: Build Flatpak Package
+        run: |
+          flatpak-builder --user --install --force-clean build-dir org.glosung.glosungci-cd.json
+
+          name: Build Flatpak
