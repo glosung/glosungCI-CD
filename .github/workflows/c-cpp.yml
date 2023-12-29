@@ -49,7 +49,6 @@ jobs:
 
       - name: Build Flatpak
         run: |
-          cd glosungCI-CD
           flatpak-builder --force-clean flatpak-repo org.example.glosung.json
           flatpak build-bundle flatpak-repo glosung.flatpak org.example.glosung
 
@@ -58,4 +57,3 @@ jobs:
         with:
           name: glosung-flatpak
           path: glosung.flatpak
-          
