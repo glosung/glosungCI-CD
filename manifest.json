@@ -1,5 +1,4 @@
 {
-  "app-id": "org.example.glosung",
   "base": "custom/scons-runtime:latest",
   "base-version": "1.0",
   "runtime": "org.gnome.Platform/x86_64/3.38",
