@@ -1,32 +1,38 @@
 {
-  "base": "custom/scons-runtime:latest",
-  "base-version": "1.0",
+  "app-id": "org.example.glosung",
   "runtime": "org.gnome.Platform/x86_64/3.38",
   "runtime-version": "3.38",
   "sdk": "org.gnome.Sdk",
-  "command": "./scripts/build.sh",
-  "finish-args": [
-     "--share=network"
-  ],
+  "command": "glosung",
+  "finish-args": ["--share=network"],
   "modules": [
-     {
-       "name": "glosung",
-       "config-opts": [
-         "--prefix=/app"
-       ],
-       "sources": [
-         {
-           "type": "git",
-           "url": "https://github.com/glosung/glosungCI-CD",
-           "branch": "main"
-         }
-       ],
-       "build-dependencies": [
-         {
-           "type": "system",
-           "name": "autoconf"
-         }
-       ]
-     }
+    {
+      "name": "glosung",
+      "buildsystem": "simple",
+      "build-commands": [
+        "./scripts/build.sh"
+      ],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/glosung/glosungCI-CD",
+          "branch": "main"
+        }
+      ],
+      "build-dependencies": [
+        {
+          "type": "system",
+          "name": "autoconf"
+        },
+        {
+          "type": "system",
+          "name": "automake"
+        },
+        {
+          "type": "system",
+          "name": "libtool"
+        }
+      ]
+    }
   ]
- }
+}

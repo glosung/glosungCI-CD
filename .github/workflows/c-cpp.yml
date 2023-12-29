@@ -37,13 +37,25 @@ jobs:
   flatpak:
     name: "Flatpak"
     runs-on: ubuntu-latest
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-44
-      options: --privileged
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Flatpak
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak
+
+      - name: Build Flatpak
+        run: |
+          cd glosungCI-CD
+          flatpak-builder --force-clean flatpak-repo org.example.glosung.json
+          flatpak build-bundle flatpak-repo glosung.flatpak org.example.glosung
+
+      - name: Publish Flatpak
+        uses: actions/upload-artifact@v2
         with:
-          bundle: palette.flatpak
-          manifest-path: manifest.json
-          cache-key: flatpak-builder-${{ github.sha }}
+          name: glosung-flatpak
+          path: glosung.flatpak
+          
