@@ -6,7 +6,7 @@
   "modules": [
     {
       "name": "glosungci-cd",
-      "buildsystem": "simple",
+      "buildsystem": "SConstruct",
       "build-options": {
         "env": {
           "PYTHON": "/usr/bin/python3",
