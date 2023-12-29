@@ -1,7 +1,6 @@
 # Beispiel requirements.txt für ein Python-Flatpak-Paket
 
 # Python-Abhängigkeiten
-Flask==2.1.4
 requests==2.26.0
 
 # Flatpak-Abhängigkeiten
