@@ -29,6 +29,13 @@ jobs:
         with:
           python-version: 3.9
           
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y scons debhelper intltool libgtk-4-dev libadwaita-1-dev libxml2-dev libcurl4-gnutls-dev libgconf2-dev gettext
+          sudo apt-get install -y python3-pip
+          pip3 install Flask==2.0.1
+
       - name: Build
         run: |
           scons
@@ -47,9 +54,6 @@ jobs:
           sudo apt install flatpak
           sudo apt upgrade
           sudo apt update
-          sudo apt-get install -y scons debhelper intltool libgtk-4-dev libadwaita-1-dev libxml2-dev libcurl4-gnutls-dev libgconf2-dev gettext
-          sudo apt-get install -y python3-pip
-          pip3 install Flask==2.0.1
           sudo apt-get install flatpak flatpak-builder -y
 
       - name: Install Flatpak SDK and Platform
