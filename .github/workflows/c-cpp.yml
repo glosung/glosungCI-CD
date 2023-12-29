@@ -1,9 +1,11 @@
 name: C CI Build and Deploy
 
+
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -22,6 +24,7 @@ jobs:
         run: |
            sudo apt-get install -y jq
            sudo apt-get install -y gawk
+           sudo apt-get install -y autogen
            
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -32,3 +35,16 @@ jobs:
         run: |
           scons
  
+   flatpak:
+    name: "Flatpak"
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:gnome-44
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: palette.flatpak
+          manifest-path: manifest.json
+          cache-key: flatpak-builder-${{ github.sha }}
