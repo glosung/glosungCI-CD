@@ -46,6 +46,7 @@ jobs:
           sudo apt update
           sudo apt upgrade
           sudo apt update
+          sudo apt-get install flatpak flatpak-builder -y
 
       - name: Install Flatpak SDK and Platform
         run: |
