@@ -46,13 +46,6 @@ jobs:
           sudo apt update
           sudo apt upgrade
           sudo apt update
-          sudo add-apt-repository --remove ppa:alexlarsson/flatpak
-          sudo add-apt-repository ppa:alexlarsson/flatpak -y
-          sudo apt-get update
-          sudo apt-get install flatpak flatpak-builder -y
-          sudo apt update
-          sudo apt upgrade
-          sudo apt update
 
       - name: Install Flatpak SDK and Platform
         run: |
