@@ -60,8 +60,8 @@ jobs:
 
       - name: Install Flatpak SDK and Platform
         run: |
-          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak install flathub org.gnome.Platform//40 org.gnome.Sdk//40 -y
+          sudo flatpak --user remote-add --no-gpg-verify tutorial-repo repo
+          sudo flatpak --user install tutorial-repo org.flatpak.Hello
 
       - name: Build Flatpak Package
         run: |
