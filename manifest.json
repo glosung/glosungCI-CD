@@ -1,27 +1,27 @@
 {
+  "runtime": "org.freedesktop.Platform//40",
+  "runtime-version": "40",
+  "sdk": "org.freedesktop.Sdk//40",
+  "command": "python3",
   "modules": [
-     {
-       "name": "your-app",
-       "buildsystem": "simple",
-       "sources": [
-         {
-           "type": "dir",
-           "path": "."
-        }
-      ],
-      "build-commands": [
-        "your-build-command-here"
-      ],
-       "build-options": {
+    {
+      "name": "glosungci-cd",
+      "buildsystem": "simple",
+      "build-options": {
         "env": {
-          "FLATPAK_RUNTIME": "org.freedesktop.Platform//40",
-          "FLATPAK_SDK": "org.freedesktop.Sdk//40"
+          "PYTHON": "/usr/bin/python3",
+          "FLATPAK_SDK": "/usr/share/sdk",
+          "FLATPAK_RUNTIME": "/usr/share/runtime/org.freedesktop.Platform/x86_64/40",
+          "FLATPAK_GL_DRIVERS": "/usr/lib/dri"
         }
       },
-      "cleanup": [
-        "/var/cache/fontconfig",
-        "/var/cache/pip"
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/glosung/glosungCI-CD.git",
+          "branch": "main"
+        }
       ]
-     }
+    }
   ]
 }
