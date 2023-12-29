@@ -10,7 +10,7 @@
   "modules": [
     {
       "name": "glosung",
-      "buildsystem": "scons",
+      "buildsystem": "autotools",
       "config-opts": [
         "--prefix=/app"
       ],
