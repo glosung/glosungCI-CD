@@ -1,28 +1,27 @@
 {
-  "buildsystem": "flatpak",
-  "runtime": "org.gnome.Platform/x86_64/3.38",
-  "runtime-version": "3.38",
-  "sdk": "org.gnome.Sdk",
-  "command": "./scripts/build.sh",
-  "finish-args": [
-       "--share=network"
-  ],
   "modules": [
      {
-       "name": "glosung",
+       "name": "your-app",
+       "buildsystem": "simple",
        "sources": [
          {
-           "type": "git",
-           "url": "https://github.com/glosung/glosungCI-CD",
-           "branch": "main"
-         }
-       ],
-       "build-dependencies": [
-         {
-           "type": "system",
-           "name": "autoconf"
-         }
-       ]
+           "type": "dir",
+           "path": "."
+        }
+      ],
+      "build-commands": [
+        "your-build-command-here"
+      ],
+       "build-options": {
+        "env": {
+          "FLATPAK_RUNTIME": "org.freedesktop.Platform//40",
+          "FLATPAK_SDK": "org.freedesktop.Sdk//40"
+        }
+      },
+      "cleanup": [
+        "/var/cache/fontconfig",
+        "/var/cache/pip"
+      ]
      }
   ]
- }
+}
