@@ -1,6 +1,9 @@
 #!/bin/bash
 
-flatpak build-bundle TESTCICD glosung-1.0.flatpak org.example.TestCICD
-flatpak build-export <zielverzeichnis> <ausgabedatei.flatpak>
+# Install autogen tool
+RUN apt-get update -y && \
+    apt-get install -y autogen
 
-chmod +x publish_flatpak.sh
+# Build your application
+npm install
+npm run build
