@@ -44,7 +44,8 @@ jobs:
       - name: Install Flatpak Dependencies
         run: |
           sudo apt remove flatpak
-  	      sudo apt install flatpak
+  	      
+          sudo apt install flatpak
           sudo apt upgrade
           sudo apt update
           sudo apt-get install flatpak flatpak-builder -y
