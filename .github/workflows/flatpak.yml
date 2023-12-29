@@ -1,36 +1,22 @@
-name: Build Flatpak
+name: Build and publish Flatpak package
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build:
+  flatpak:
+    name: "Flatpak"
     runs-on: ubuntu-latest
-
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:gnome-44
+      options: --privileged
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-
-    - name: Install Flatpak dependencies
-      run: |
-        sudo add-apt-repository ppa:alexlarsson/flatpak -y
-        sudo apt update
-        sudo apt install flatpak flatpak-builder flatpak-runtime -y
-
-    - name: Build Flatpak
-      run: |
-        flatpak-builder --force-clean --repo=repo your-app org.gnome.zbrown.glosung.json
-
-    - name: Publish Flatpak
-      uses: actions/upload-artifact@v2
+    - uses: actions/checkout@v4
+    - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
       with:
-        name: flatpak-artifact
-        path: repo
-
-    - name: Publish Flatpak Repository
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.TOKEN }}
-        publish_dir: ./repo
+        bundle: palette.flatpak
+        manifest-path: manifest.json
+        cache-key: flatpak-builder-${{ github.sha }}

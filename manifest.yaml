@@ -8,7 +8,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/zbrown/glosung.git
-        commit: master
+        commit: main
     plugins:
       - flatpak-plugin-x11
     dependencies:
@@ -28,10 +28,7 @@ modules:
       - libxml2
       - sqlite3
     build-commands:
-      - make
-      - make install
-    install-commands:
-      - make install
+      - scons
     runtime-dependencies:
       - gsettings-desktop-schemas
       - gtk+3
