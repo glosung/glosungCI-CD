@@ -57,11 +57,28 @@ jobs:
           sudo apt upgrade
           sudo apt update
           sudo apt-get install flatpak flatpak-builder -y
+          sudo apt-get update -qy
+          sudo apt-get install -y flatpak-builder flatpak
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y flathub org.gnome.Platform/x86_64/40
+          sudo flatpak update -y
+          sudo flatpak install -y flathub org.freedesktop.Platform.GL.default//23.08
+          sudo flatpak install flathub org.gnome.Platform/x86_64/3.38 -y
+          git config --global user.name "glosung"
+          git config --global user.email "nued_a@yahoo.com"
+          git config --global init.defaultBranch main
+          git config --global credential.helper 'cache --timeout=3600'
+          git config --global init.defaultBranch main
+          git config --global http.extraheader "AUTHORIZATION: basic ${{ secrets.TOKEN }}"
+          echo -e "machine github.com\n  login ${{ secrets.TOKEN }}" > ~/.netrc
+          chmod 600 ~/.netrc
+
 
       - name: Install Flatpak SDK and Platform
         run: |
-          sudo flatpak --user remote-add --no-gpg-verify tutorial-repo repo
-          sudo flatpak --user install tutorial-repo org.flatpak.Hello
+          sudo flatpak-builder --force-clean --install-deps-from=flathub build-directory org.gnome.zbrown.glosung.json
+          sudo flatpak-builder --force-clean --repo=repo-directory flatpak-build-directory org.gnome.zbrown.glosung.json
+
 
       - name: Build Flatpak Package
         run: |
