@@ -47,26 +47,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Install Flatpak Dependencies
+    
+      - name: Set up Flatpak environment
         run: |
-          sudo apt remove flatpak  
-          sudo apt install flatpak
-          sudo apt upgrade
           sudo apt-get update -qy
-          sudo apt-get install flatpak flatpak-builder -y
           sudo apt-get install -y flatpak-builder flatpak
-        
-      - name: Install Flatpak SDK and Platform
-        run: |
           sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          sudo flatpak install -y flathub org.gnome.Platform/x86_64/40
+          sudo flatpak install -y flathub org.gnome.Sdk//43
           sudo flatpak update -y
           sudo flatpak install -y flathub org.freedesktop.Platform.GL.default//23.08
-          sudo flatpak install flathub org.gnome.Platform/x86_64/3.38 -y
+          sudo apt-get install -y
 
-      - name: Build Flatpak Package
-        run: |
-          flatpak-builder --user --install --force-clean build-dir org.glosung.glosungci-cd.json
+      - name: Flatpak Builder
+        uses: flatpak/flatpak-github-actions@v6.3
