@@ -1,27 +1,38 @@
 {
-  "runtime": "org.freedesktop.Platform//40",
-  "runtime-version": "40",
-  "sdk": "org.freedesktop.Sdk//40",
-  "command": "python3",
-  "modules": [
-    {
-      "name": "glosungci-cd",
-      "buildsystem": "SConstruct",
-      "build-options": {
-        "env": {
-          "PYTHON": "/usr/bin/python3",
-          "FLATPAK_SDK": "/usr/share/sdk",
-          "FLATPAK_RUNTIME": "/usr/share/runtime/org.freedesktop.Platform/x86_64/40",
-          "FLATPAK_GL_DRIVERS": "/usr/lib/dri"
-        }
-      },
-      "sources": [
-        {
-          "type": "git",
-          "url": "https://github.com/glosung/glosungCI-CD.git",
-          "branch": "main"
-        }
-      ]
-    }
-  ]
-}
+    "id": "org.glosung.glosungci-cd",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "40",
+    "sdk": "org.gnome.Sdk",
+    "command": "glosungci-cd",
+    "build-options": {
+      "cflags": "-O2 -g",
+      "cxxflags": "-O2 -g",
+      "env": {
+        "PYTHONPATH": "/app/lib/python3.9/site-packages"
+      }
+    },
+    "modules": [
+      {
+        "name": "glosungci-cd",
+        "buildsystem": "simple",
+        "sources": [
+          {
+            "type": "git",
+            "url": "https://github.com/glosung/glosungCI-CD.git",
+            "branch": "main"
+          }
+        ],
+        "build-commands": [
+          "pip3 install -r requirements.txt",
+          "python3 setup.py install --root=/app"
+        ],
+        "cleanup": [
+          "/include",
+          "/lib/pkgconfig",
+          "/share/doc",
+          "/share/gtk-doc",
+          "/share/man"
+        ]
+      }
+    ]
+  }

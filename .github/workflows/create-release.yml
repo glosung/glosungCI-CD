@@ -24,6 +24,19 @@ jobs:
       - name: Create tar file
         run: zip -r glosung.tar.xz . -x ".git/*" ".github/*" "TODO" "screenshot.png" ".gitignore" "glosung.svg" "herrnhut.svg" "README.md" "INSTALL" "org.flatpak.glosung.yaml" "org.gnome.zbrown.glosung.json" "publish_flatpak.sh" "yamltest.yml" "publish_flatpak.sh" "CHANGELOG.md"
 
+      - name: Set up Flatpak environment
+        run: |
+          sudo apt-get update -qy
+          sudo apt-get install -y flatpak-builder flatpak
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y flathub org.gnome.Sdk//43
+          sudo flatpak update -y
+          sudo flatpak install -y flathub org.freedesktop.Platform.GL.default//23.08
+          sudo apt-get install -y
+
+      - name: Flatpak Builder
+        uses: flatpak/flatpak-github-actions@v6.3
+
 #Maybe remove
       - name: Get Date
         id: get_date
@@ -75,4 +88,12 @@ jobs:
           asset_path: ./glosung.tar.xz
           asset_name: glosung.tar.xz
           asset_content_type: application/tar.xz
+
+      - name: Upload Flatpak package to GitHub Releases
+        uses: actions/upload-artifact@v2
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: #todo
+          asset_name: #todo
+          asset_content_type: application/todo
           
