@@ -1,0 +1,34 @@
+name: Build and publish Flatpak package
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  flatpak:
+    name: "Flatpak"
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+
+      - name: Set up Flatpak environment
+        run: |
+          sudo apt-get update -qy
+          sudo apt-get install -y flatpak-builder flatpak
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install -y flathub org.gnome.Sdk//43
+          sudo flatpak update -y
+          sudo flatpak install -y flathub org.freedesktop.Platform.GL.default//23.08
+          sudo apt-get install -y
+
+      - name: Flatpak Builder
+        uses: flatpak/flatpak-github-actions@v6.3
+
+      - name: Upload Flatpak package to GitHub Releases
+        uses: actions/upload-artifact@v2
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          name: flatpak-package
+          path: path/to/your/flatpak-packag

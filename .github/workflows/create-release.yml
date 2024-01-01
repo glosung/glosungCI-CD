@@ -1,9 +1,10 @@
 name: Release on Merge
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    types:
-      - closed
+    branches: [ main ]
 
 jobs:
   release:
@@ -26,13 +27,9 @@ jobs:
 
       - name: Set up Flatpak environment
         run: |
-          sudo apt-get update -qy
           sudo apt-get install -y flatpak-builder flatpak
-          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
           sudo flatpak install -y flathub org.gnome.Sdk//43
           sudo flatpak update -y
-          sudo flatpak install -y flathub org.freedesktop.Platform.GL.default//23.08
-          sudo apt-get install -y
 
       - name: Flatpak Builder
         uses: flatpak/flatpak-github-actions@v6.3
